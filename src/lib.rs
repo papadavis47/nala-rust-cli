@@ -21,8 +21,6 @@ pub mod speech;
 pub mod state;
 pub mod theme;
 
-use std::time::Duration;
-
 use colored::Colorize;
 
 use crate::cli::{Cli, Command};
@@ -38,7 +36,7 @@ pub fn run(cli: Cli) -> Result<()> {
     let mut nala = Nala::load()?;
 
     // No subcommand? Just show her.
-    let command = cli.command.unwrap_or(Command::Show { animate: false });
+    let command = cli.command.unwrap_or(Command::Show);
 
     match command {
         Command::Say { words } => {
@@ -52,7 +50,7 @@ pub fn run(cli: Cli) -> Result<()> {
                 "{}",
                 "You give Nala a good pet. *thump thump thump*".color(theme.accent)
             );
-            show(&nala, false)?;
+            show(&nala)?;
         }
         Command::Feed => {
             nala.feed();
@@ -62,7 +60,7 @@ pub fn run(cli: Cli) -> Result<()> {
                 "{}",
                 "Nala gobbles up the treat! *happy crunching*".color(theme.accent)
             );
-            show(&nala, false)?;
+            show(&nala)?;
         }
         Command::Trick => {
             trick(&nala)?;
@@ -70,8 +68,8 @@ pub fn run(cli: Cli) -> Result<()> {
         Command::Fortune => {
             fortune(&nala)?;
         }
-        Command::Show { animate } => {
-            show(&nala, animate)?;
+        Command::Show => {
+            show(&nala)?;
         }
         Command::Status => {
             status(&nala);
@@ -90,15 +88,10 @@ fn say(nala: &Nala, text: &str) {
     println!("{}", art::portrait(mood).color(theme.art));
 }
 
-/// Show Nala's portrait (optionally animated) plus her mood.
-fn show(nala: &Nala, animate: bool) -> Result<()> {
+/// Show Nala's portrait plus her mood.
+fn show(nala: &Nala) -> Result<()> {
     let mood = nala.mood();
     let theme = Theme::for_mood(mood);
-
-    if animate {
-        // A handful of wag cycles, then settle on the static portrait.
-        art::animate(&art::wag_frames(), 6, Duration::from_millis(250))?;
-    }
 
     println!("{}", art::portrait(mood).color(theme.art));
     println!(
