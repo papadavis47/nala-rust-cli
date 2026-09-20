@@ -38,6 +38,9 @@ pub fn run(cli: Cli) -> Result<()> {
     // No subcommand? Just show her.
     let command = cli.command.unwrap_or(Command::Show);
 
+    // Breathing room between the shell prompt and Nala's output.
+    println!();
+
     match command {
         Command::Say { words } => {
             say(&nala, &words.join(" "));
@@ -50,6 +53,7 @@ pub fn run(cli: Cli) -> Result<()> {
                 "{}",
                 "You give Nala a good pet. *thump thump thump*".color(theme.accent)
             );
+            println!();
             show(&nala)?;
         }
         Command::Feed => {
@@ -60,6 +64,7 @@ pub fn run(cli: Cli) -> Result<()> {
                 "{}",
                 "Nala gobbles up the treat! *happy crunching*".color(theme.accent)
             );
+            println!();
             show(&nala)?;
         }
         Command::Trick => {
@@ -85,6 +90,7 @@ fn say(nala: &Nala, text: &str) {
     let theme = Theme::for_mood(mood);
     let spoken = speech::barkify(text);
     print!("{}", speech::bubble(&spoken).color(theme.accent));
+    println!();
     println!("{}", art::portrait(mood).color(theme.art));
 }
 
@@ -110,6 +116,7 @@ fn trick(nala: &Nala) -> Result<()> {
         Some(t) => println!("{}", format!("Nala {t}.").color(theme.accent)),
         None => println!("Nala doesn't know any tricks yet!"),
     }
+    println!();
     println!("{}", art::portrait(nala.mood()).color(theme.art));
     Ok(())
 }
@@ -122,6 +129,7 @@ fn fortune(nala: &Nala) -> Result<()> {
         Some(f) => println!("{}", format!("\u{1F4AD} {f}").color(theme.accent)),
         None => println!("Nala is out of wisdom for now."),
     }
+    println!();
     println!("{}", art::portrait(nala.mood()).color(theme.art));
     Ok(())
 }
